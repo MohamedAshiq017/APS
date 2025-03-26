@@ -10,14 +10,15 @@ import Appointment from './pages/Appointment'
 import NavBar from './components/NavBar'
 import Contact from './pages/Contact'
 import Header from './components/Header'
+import Footer from './components/Footer'
 const App = () => {
   return (   //
     <div  className='mx-4 sm:mx-[10%]'>   
       <NavBar/>
       <Routes>
         <Route path='/' element={<Home/>}/>
-        <Route path='/Doctors' element={<Doctors/>}/>
-        <Route path='/Doctor/:speciality' element={<Doctors/>}/>
+        <Route path='/doctors' element={<Doctors/>}/>
+        <Route path='/doctors/:speciality' element={<Doctors/>}/>
         <Route path='/Login' element={<Login/>}/>
         <Route path='/About' element={<About/>}/>
         <Route path='/Contact' element={<Contact/>}/>
@@ -25,6 +26,7 @@ const App = () => {
         <Route path='/myAppointments' element={<MyAppointments/>}/>
         <Route path='/Appointment/:docId' element={<Appointment/>}/>
       </Routes>
+      <Footer/>
     </div>
   )
 }
