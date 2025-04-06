@@ -16,6 +16,8 @@ const doctorSchema = new mongoose.Schema({
     solts_booked:{type:Object,default:{}},
 },{minimize:false})
 
+console.log("Mongoose.models:", mongoose.models);
 const doctorModel = mongoose.models.doctor || mongoose.model("doctor",doctorSchema)
 
+console.log("Mongoose.models:", mongoose.models);
 export default doctorModel
