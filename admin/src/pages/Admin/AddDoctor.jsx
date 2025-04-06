@@ -17,6 +17,8 @@ const[speciality,setSpeciality] = useState('General Physician')
 const[degree,setDegree] = useState('')
 const[address1,setAddress1] = useState('')
 const[address2,setAddress2] = useState('')
+const [customExperience, setCustomExperience] = useState('');
+const [customSpeciality, setCustomSpeciality] = useState('');
 
 const {backendUrl, aToken} = useContext(AdminContext)
 
@@ -27,16 +29,26 @@ try{
         return toast.error("Image Not Selected")
     }
 
+    if (experience === 'Others' && customExperience.trim() === '') {
+        return toast.error("Please enter experience");
+      }
+      if (speciality === 'Others' && customSpeciality.trim() === '') {
+        return toast.error("Please enter speciality");
+      }
+
     const formData = new FormData()
 
     formData.append('image',docImg)
     formData.append('name',name )
     formData.append('email',email )
     formData.append('password',password )
-    formData.append('experience', experience)
+    // formData.append('experience', experience)
+    formData.append('experience', experience === 'Others' ? customExperience : experience);
     formData.append('fees',Number(fees) )
     formData.append('about',about )
-    formData.append('speciality',speciality )
+    // formData.append('speciality',speciality )
+    formData.append('speciality', speciality === 'Others' ? customSpeciality : speciality);
+
     formData.append('degree',degree )
     formData.append('address', JSON.stringify( {line1:address1,line2:address2}) )
     
@@ -60,6 +72,10 @@ try{
         setDegree('')
         setAbout('')
         setFees('')
+        setExperience('1 Year')
+        setSpeciality('General Physician')
+        setCustomExperience('');
+        setCustomSpeciality('');
     } else{
         toast.error(data.message)
     }
@@ -88,7 +104,8 @@ try{
                         <img className='w-16 bg-gray-100 rounded-full cursor-pointer' src={ docImg ? URL.createObjectURL(docImg) : assets.upload_area} alt="" />
                     </label>
                     <input onChange={(e) => setDocImg(e.target.files[0])} type="file" id="doc-img" hidden />
-                    <p>Upload doctor <br /> picture</p>
+                    {/* <p>Upload doctor <br /> picture</p> */}
+                    {!docImg && <p>Upload doctor <br /> picture</p>}
                 </div>
 
                 <div className='flex flex-col lg:flex-row items-start gap-10 text-gray-600'>
@@ -122,7 +139,17 @@ try{
                                 <option value="8 Years">8 Years</option>
                                 <option value="9 Years">9 Years</option>
                                 <option value="10 Years">10 Years</option>
+                                <option >Others</option>
                             </select>
+                            {experience === 'Others' && (
+        <input
+            type="text"
+            className='border rounded px-3 py-2'
+            placeholder='Enter experience'
+            value={customExperience}
+            onChange={(e) => setCustomExperience(e.target.value)} required
+        />
+    )}
                         </div>
 
                         <div className='flex-1 flex flex-col gap-1'>
@@ -139,10 +166,20 @@ try{
                                 <option value="General Physician">General Physician</option>
                                 <option value="Gynaecologist">Gynaecologist</option>
                                 <option value="Dermatologist">Dermatologist</option>
-                                <option value="Pediatricians">Pediatricians</option>
-                                <option value="Nuerologist">Nuerologist</option>
+                                <option value="Pediatrician">Pediatrician</option>
+                                <option value="Neurologist">Neurologist</option>
                                 <option value="Gastroentologist">Gastroentologist</option>
+                                <option >Others</option>
                             </select>
+                            {speciality === 'Others' && (
+        <input
+            type="text"
+            className='border rounded px-3 py-2'
+            value={customSpeciality}
+            placeholder='Enter speciality'
+            onChange={(e) => setCustomSpeciality(e.target.value)} required
+        />
+    )}
                         </div>
 
                         <div className='flex-1 flex flex-col gap-1'>
