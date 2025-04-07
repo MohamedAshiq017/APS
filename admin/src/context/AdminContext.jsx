@@ -31,9 +31,9 @@ toast.error(error.message)
 }
 
 
-const changeAvailability = async(docId) =>{
+const changeAvailability = async(docId)  => {
     try{
-        const {data} = await axios.post(backendUrl +'/api/admin/change-availabilty',{docId},{headers:{aToken}})
+        const {data} = await axios.post(backendUrl +'/api/admin/change-availability',{docId},{headers:{aToken}})
 
         if(data.success){
             toast.success(data.message)
@@ -52,7 +52,7 @@ const changeAvailability = async(docId) =>{
     }
     const value ={
         aToken,setAToken,
-        backendUrl,doctors, getAllDoctors,changeAvailability
+        backendUrl,doctors, getAllDoctors,changeAvailability,
     }
 
     return(
