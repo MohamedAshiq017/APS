@@ -24,12 +24,11 @@ const[userData,setUserData] = useState(false)
             setDoctors(data.doctors )
           }
           else{
-            console.log("Token from localStorage:", localStorage.getItem("token"));
+            
             toast.error(data.message)
           }
       }
       catch(error){
-        console.log("Token from localStorage:", localStorage.getItem("token"));
           console.log(error)
           toast.error(error.message)
           
@@ -52,10 +51,10 @@ const[userData,setUserData] = useState(false)
       }
     }
     const value ={
-      doctors,currencySymbol,token,setToken, backendUrl,userData,setUserData,loadUserProfileData
+      doctors,getDoctorsData,currencySymbol,token,setToken, backendUrl,userData,setUserData,loadUserProfileData
   }
 
-  console.log("Token from localStorage:", localStorage.getItem("token"));
+ 
 
 useEffect(()=>{
   getDoctorsData()

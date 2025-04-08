@@ -37,7 +37,7 @@ const MyProfile = () => {
 
       image  && formData.append('image',image)
 
-      console.log("Token from localStorage:", localStorage.getItem("token"));
+      
       const {data} = await axios.post(backendUrl + '/api/user/update-profile',formData,{headers:{token}})
 
       if(data.success){
@@ -52,7 +52,7 @@ const MyProfile = () => {
 
      }catch(error){
       console.log(error)
-      console.log("Token from localStorage:", localStorage.getItem("token"));
+     
       toast.error(error.message)
      }
   }
