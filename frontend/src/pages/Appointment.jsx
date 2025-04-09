@@ -35,12 +35,7 @@ const Appointment = () => {
 
     let today = new Date();
 
-    // console.log(docInfo.slots_booked)
-    // const BookedSlots = [];
-    // for(let i = 0; i<docInfo.slots_booked.length ;i++)
-    // {
-    //     BookedSlots.push()
-    // }
+    
 
 
     for (let i = 0; i < 7; i++) {
@@ -71,8 +66,8 @@ const Appointment = () => {
           minute: "2-digit",});///c
           
           let day = currentDate.getDate()
-          let month = currentDate.getMonth()
-          let year = currentDate.getYear()
+          let month = currentDate.getMonth()+1
+          let year = currentDate.getFullYear()
 
           const slotDate = day + "_" + month + "_" + year;
           const slotTime = formattedTime
