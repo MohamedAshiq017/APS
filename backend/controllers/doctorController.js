@@ -197,6 +197,41 @@ const doctorDashboard =  async(req,res) =>{
 }
 
 
-export {changeAvailability,doctorList,loginDoctor,appointmentsDoctor,appointmentCancel,appointmentComplete,doctorDashboard
+//API to get doctor profile for doctor panel
+
+const doctorProfile = async(req,res) =>{
+    try {
+        const token = req.headers.dtoken;
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const docId = decoded.id;
+
+        const profileData = await doctorModel.findById(docId).select('-password')
+
+        res.json({success:true,profileData})
+    } catch (error) {
+        console.log(error)
+        res.json({success:false,message:error.message})
+    }
+}
+
+//API TO UPDATE DOCTOR PROFILE DATA FROM DOCTOR PANEL
+
+const updateDoctorProfile = async(req,res) => {
+    try {
+        // const {docId,fees,address,available} = req.body
+        const docId = req.user;
+        const {fees,address,available} = req.body
+
+        await doctorModel.findByIdAndUpdate(docId,{fees,address,available})
+
+        res.json({success:true,message:'Profile updated'})
+    } catch (error) {
+        console.log(error)
+        res.json({success:false,message:error.message})
+    }
+}
+
+
+export {changeAvailability,doctorList,loginDoctor,appointmentsDoctor,appointmentCancel,appointmentComplete,doctorDashboard,doctorProfile,updateDoctorProfile
 
 }
