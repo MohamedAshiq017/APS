@@ -153,6 +153,50 @@ const { appointmentId } = req.body;
 }
 
 
-export {changeAvailability,doctorList,loginDoctor,appointmentsDoctor,appointmentCancel,appointmentComplete
+//API TO GET DASHBOARD DATA FOR DOCTOR MODEL
+
+const doctorDashboard =  async(req,res) =>{
+    try {
+        
+        const token = req.headers.dtoken;
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const docId = decoded.id;
+
+        const appointments = await appointmentModel.find({docId})
+       
+        let earnings = 0
+
+        appointments.map((item)=>{
+             if(item.isCompleted || item.payment){
+                earnings += item.amount
+             }
+        })
+
+        let patients = []
+
+        appointments.map((item)=>{
+            if (!patients.includes(item.userId.toString())) {
+                patients.push(item.userId.toString());
+            }
+        })
+
+        const dashData = {
+            earnings,
+            appointments : appointments.length,
+            patients:patients.length,
+            latestAppointments : appointments.reverse().slice(0,5)
+        }
+
+        res.json({success:true,dashData})
+
+
+    } catch (error) {
+        console.log(error)
+        res.json({success:false,message:error.message})
+    }
+}
+
+
+export {changeAvailability,doctorList,loginDoctor,appointmentsDoctor,appointmentCancel,appointmentComplete,doctorDashboard
 
 }
