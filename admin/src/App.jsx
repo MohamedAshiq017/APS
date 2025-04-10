@@ -24,8 +24,7 @@ const App = () => {
 const {aToken} =  useContext(AdminContext)
 const {dToken} =  useContext(DoctorContext)
 
-console.log("atoken:", aToken);
-console.log("dtoken:" ,dToken);
+
 
 
   return aToken || dToken ? (
