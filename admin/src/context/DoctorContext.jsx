@@ -92,6 +92,8 @@ const DoctorContextProvider = (props) =>{
         try {
             const {data} = await axios.get(backendUrl +'/api/doctor/profile',{headers:{dToken}})
 
+            console.log("DoctorProfile rendered", profileData);
+
             if(data.success){
                 setProfileData(data.profileData)
                 console.log(data.profileData);

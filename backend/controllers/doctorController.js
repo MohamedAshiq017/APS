@@ -219,8 +219,16 @@ const doctorProfile = async(req,res) =>{
 const updateDoctorProfile = async(req,res) => {
     try {
         // const {docId,fees,address,available} = req.body
-        const docId = req.user;
+        // const docId = req.user;
+        const token = req.headers.dtoken;
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const docId = decoded.id;
         const {fees,address,available} = req.body
+        console.log(docId);
+        console.log(fees);
+        console.log(available);
+        console.log(address);
+        
 
         await doctorModel.findByIdAndUpdate(docId,{fees,address,available})
 

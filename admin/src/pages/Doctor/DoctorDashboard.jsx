@@ -63,7 +63,7 @@ const DoctorDashboard = () => {
                         <img className='rounded-full w-10' src={item.userData.image} alt="" />
                         <div className='flex-1 text-sm' >
                         <p className='text-gray-800 font-medium'>{item.userData.name}</p>
-                        <p className='text-gray-600'>{slotDateFormat(item.slotDate)}</p>
+                        <p className='text-gray-600'>{slotDateFormat(item.slotDate)} {item.slotTime}</p>
                         </div>
                         {
                                       item.cancelled

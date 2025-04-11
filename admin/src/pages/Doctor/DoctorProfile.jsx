@@ -20,11 +20,16 @@ const DoctorProfile = () => {
         fees:profileData.fees,
         available:profileData.available
       }
+      console.log('Sending update:', updateData) 
 
       const {data} = await axios.post(backendUrl +'/api/doctor/update-profile',updateData,{headers:{dToken}})
 
+      console.log('Response:', data) 
+
+      
+
       if(data.success){
-        toast.success(data.messaage)
+        toast.success(data.message)
       setIsEdit(false)
       getProfileData()
 
@@ -78,10 +83,10 @@ const DoctorProfile = () => {
     <div className='flex gap-2 py-2'>
       <p>Address:</p>
       <p className='text-sm'>
-        { isEdit ? <input type="text"  onChange={()=>setProfileData(prev => ({...prev,address:{...prev.address,line1:e.target.value}}))} value={profileData.address.line1} />
+        { isEdit ? <input type="text"  onChange={(e)=>setProfileData(prev => ({...prev,address:{...prev.address,line1:e.target.value}}))} value={profileData.address.line1} />
          : profileData.address.line1}
         <br />
-        { isEdit ? <input type="text"  onChange={()=>setProfileData(prev => ({...prev,address:{...prev.address,line2:e.target.value}}))} value={profileData.address.line2} />
+        { isEdit ? <input type="text"  onChange={(e)=>setProfileData(prev => ({...prev,address:{...prev.address,line2:e.target.value}}))} value={profileData.address.line2} />
          : profileData.address.line2}
       </p>
     </div>
