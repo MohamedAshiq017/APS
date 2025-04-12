@@ -13,7 +13,7 @@ const DoctorsList = () => {
     },[aToken])
 
   return (
-    <div className ='m-5 max-h-[90vh] overflow-y-scroll'>
+    <div className ='m-5 max-h-[90vh] overflow-y-scroll-hidden'>
 <h1 className='text-lg font-medium'>All Doctors</h1>
 <div className='w-full flex flex-wrap gap-4 pt-5 gap-y-6'>
     {

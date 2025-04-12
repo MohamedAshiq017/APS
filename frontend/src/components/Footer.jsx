@@ -37,7 +37,7 @@ const Footer = () => {
         </div>
       </div>
       <div>
-        {/* -------------Copy RIght Text------------------ */}
+        {/* -------------Copy Right Text------------------ */}
         <hr />
         <p className="py-5  text-sm text-center">Copyright © 2024 Precripto - All Right Reserved.</p>
       </div>

@@ -50,12 +50,12 @@ const NavBar = () => {
         <div className='absolute top-0 right-0 pt-14 text-base font-medium text-gray-600 z-20 hidden group-hover:block' >
             <div className='min-w-48 bg-stone-100 rounded flex flex-col   gap-4 p-4 '>
                 <p onClick={()=>navigate('myProfile')} className='hover:text-black cursor-pointer'>My Profile</p>
-                <p onClick={()=>navigate('myAppointments')} className='hover:text-black cursor-pointer'>Appointments</p>
+                <p onClick={()=>navigate('myAppointments')} className='hover:text-black cursor-pointer'>My Appointments</p>
                 <p onClick={logout} className='hover:text-black cursor-pointer'>Logout</p>
             </div>
         </div>
     </div>
-    : <button onClick={()=>navigate('/login')} className='bg-primary text-white px-8 py-3 rounded-full font-light hidden md:block '>Create account </button>
+    : <button onClick={()=>navigate('/login')} className='bg-primary text-white px-8 py-3 rounded-full font-light hidden md:block '>Create Account </button>
 }
 <img onClick={()=>setShowMenu(true)} className='w-6 md:hidden' src={assets.menu_icon} alt="" />
 {/* {Mobile Menu} */}
