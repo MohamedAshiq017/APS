@@ -240,6 +240,37 @@ const updateDoctorProfile = async(req,res) => {
 }
 
 
-export {changeAvailability,doctorList,loginDoctor,appointmentsDoctor,appointmentCancel,appointmentComplete,doctorDashboard,doctorProfile,updateDoctorProfile
+//API to set availability slots
 
+    const setAvailability = async (req, res) => {
+        try {
+          const { availability } = req.body;  // Availability sent in the request body
+          const token = req.headers.dtoken;
+          const decoded = jwt.verify(token, process.env.JWT_SECRET);
+          const docId = decoded.id;
+
+          console.log(availability)
+      
+          const doctor = await doctorModel.findById(docId);
+      
+          if (!doctor) {
+            return res.json({ success: false, message: "Doctor not found" });
+          }
+      
+          // Assuming you have an "availability" field in your doctor model
+          doctor.availability = availability;
+      
+          await doctor.save();
+      
+          res.json({ success: true, message: "Availability updated successfully!" });
+        } catch (error) {
+          console.log(error);
+          res.json({ success: false, message: error.message });
+        }
+      };
+
+
+  
+  
+export {changeAvailability,doctorList,loginDoctor,appointmentsDoctor,appointmentCancel,appointmentComplete,doctorDashboard,doctorProfile,updateDoctorProfile,setAvailability
 }
