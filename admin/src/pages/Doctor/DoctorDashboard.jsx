@@ -41,29 +41,30 @@ const DoctorDashboard = () => {
   
   };
 
- // Step 1: Initialize state from localStorage or default value
-const [availability, setAvailability] = useState(() => {
-  const savedAvailability = localStorage.getItem('doctorAvailability');
-  if (savedAvailability) {
-    return JSON.parse(savedAvailability); // Parse the saved data if it exists
-  }
-
-  // Default availability if no saved data exists
-  const defaultAvailability = {};
-  const today = new Date();
-  
-    for (let i = 0; i < 7; i++) {
-      const nextDate = new Date(today);
-      nextDate.setDate(today.getDate() + i);
-  
-      const weekdayName = weekDays[nextDate.getDay() === 0 ? 6 : nextDate.getDay() - 1]; // convert JS 0-6 (Sun-Sat) to Mon-Sun
-      const dateString = nextDate.toISOString().split("T")[0];
-  
-      defaultAvailability[weekdayName] = {
-        date: dateString,
-        slots: [{ start: "10:00", end: "13:00" }]
-      };
+  const [availability, setAvailability] = useState(() => {
+    const savedAvailability = localStorage.getItem('doctorAvailability');
+    if (savedAvailability) {
+      return JSON.parse(savedAvailability);
     }
+  
+    const defaultAvailability = {};
+const today = new Date();
+const currentDay = today.getDay(); // Current day of the week
+const startOfWeek = today; // Start from today
+
+// Set dates for the next week up to Sunday + next Monday
+for (let i = 0; i < 7; i++) {
+  const nextDate = new Date(startOfWeek);
+  nextDate.setDate(startOfWeek.getDate() + i); // Adding days
+
+  const dateString = nextDate.toISOString().split("T")[0];
+  const weekdayName = weekDays[(currentDay + i) % 7]; // Dynamically calculate weekday names
+
+  defaultAvailability[weekdayName] = {
+    date: dateString,
+    slots: [{ start: "10:00", end: "13:00" }]
+  };
+}
   
     return defaultAvailability;
   });
@@ -102,18 +103,27 @@ const [availability, setAvailability] = useState(() => {
 
   const saveAvailability = async () => {
     try {
-      const saveData = {
-        availability: availability, // Assuming availability is a state or variable holding availability data
-      };
-      
-      console.log('Sending availability:', saveData);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); // For date-only comparison
   
-       const { data } = await axios.post( backendUrl +'/api/doctor/set-availability', saveData, {headers:  {dToken}})
+      const filteredAvailability = {};
+      for (const [day, { date, slots }] of Object.entries(availability)) {
+        const slotDate = new Date(date);
+        slotDate.setHours(0, 0, 0, 0);
+        if (slotDate >= today) {
+          filteredAvailability[day] = { date, slots };
+        }
+      }
   
-      console.log('Response:', data);
+      const saveData = { availability: filteredAvailability };
+  
+      const { data } = await axios.post(
+        backendUrl + '/api/doctor/set-availability',
+        saveData,
+        { headers: { dToken } }
+      );
   
       if (data.success) {
-        console.log(data.message)
         toast.success(data.message);
       } else {
         toast.error(data.message || "Failed to save availability.");
@@ -121,6 +131,22 @@ const [availability, setAvailability] = useState(() => {
     } catch (error) {
       toast.error(error.message);
       console.log(error);
+    }
+  };
+
+  const fetchAvailability = async () => {
+    try {
+      const { data } = await axios.get(backendUrl + "/api/doctor/availability", {
+        headers: { dToken }
+      });
+      if (data.success) {
+        setAvailability(data.availability);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error("Error loading availability");
     }
   };
 
@@ -138,15 +164,14 @@ const [availability, setAvailability] = useState(() => {
     getDashData();
   }, []);
 
-  useEffect(() => {
-    console.log("Profile data in dashboard:", profileData);
-    console.log("Dash data in dashboard:", dashData);
-  }, [profileData, dashData]);
 
   useEffect(() => {
-    localStorage.setItem('doctorAvailability', JSON.stringify(availability)); // Save updated availability
-  }, [availability]); // Run this effect whenever `availability` changes
-  
+    if (dToken) {
+      getDashData();
+      getProfileData();
+      fetchAvailability(); // 🚀 Fetch from DB not localStorage
+    }
+  }, [dToken]);
 
 
 
@@ -224,6 +249,7 @@ const [availability, setAvailability] = useState(() => {
       <input
         type="date"
         value={availability[day].date}
+        min={new Date().toISOString().split("T")[0]}
         onChange={(e) =>
           setAvailability((prev) => ({
             ...prev,

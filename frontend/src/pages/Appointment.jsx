@@ -37,54 +37,59 @@ const Appointment = () => {
 
 
   const getAvailableSlots = async () => {
-
-
     if (!docInfo?.availability || Object.keys(docInfo.availability).length === 0) {
       setDocSlots([]);
       return;
     }
+  
     const availabilityEntries = Object.entries(docInfo.availability);
     const groupedSlots = {};
-
+    const today = new Date();
+  
+    // Loop from today to next Monday
     for (let i = 0; i < 7; i++) {
-        const today = new Date();
-        const checkDate = new Date(today.setDate(today.getDate() + i)).toISOString().split("T")[0];
-
-        for (const [day, { date, slots: daySlots }] of availabilityEntries) {
-            if (checkDate === date) {
-                daySlots.forEach(slot => {
-                    const [startHour, startMin] = slot.start.split(":").map(Number);
-                    const [endHour, endMin] = slot.end.split(":").map(Number);
-
-                    let startTime = startHour * 60 + startMin;
-                    const endTime = endHour * 60 + endMin;
-
-                    while (startTime + 30 <= endTime) {
-                        const fromHour = Math.floor(startTime / 60);
-                        const fromMin = startTime % 60;
-                        const toHour = Math.floor((startTime + 30) / 60);
-                        const toMin = (startTime + 30) % 60;
-
-                        const time = `${String(fromHour).padStart(2, '0')}:${String(fromMin).padStart(2, '0')} - ${String(toHour).padStart(2, '0')}:${String(toMin).padStart(2, '0')}`;
-
-                        if (!groupedSlots[checkDate]) {
-                            groupedSlots[checkDate] = [];
-                        }
-                        groupedSlots[checkDate].push({
-                            date: checkDate,
-                            time,
-                            day
-                        });
-
-                        startTime += 30;
-                    }
-                });
+      const checkDate = new Date(today);
+      checkDate.setDate(today.getDate() + i);
+      const checkDateString = checkDate.toISOString().split("T")[0];
+  
+      for (const [day, { date, slots: daySlots }] of availabilityEntries) {
+        if (checkDateString === date) {
+          daySlots.forEach(slot => {
+            const [startHour, startMin] = slot.start.split(":").map(Number);
+            const [endHour, endMin] = slot.end.split(":").map(Number);
+  
+            let startTime = startHour * 60 + startMin;
+            const endTime = endHour * 60 + endMin;
+  
+            while (startTime + 30 <= endTime) {
+              const fromHour = Math.floor(startTime / 60);
+              const fromMin = startTime % 60;
+              const toHour = Math.floor((startTime + 30) / 60);
+              const toMin = (startTime + 30) % 60;
+  
+              const time = `${String(fromHour).padStart(2, '0')}:${String(fromMin).padStart(2, '0')} - ${String(toHour).padStart(2, '0')}:${String(toMin).padStart(2, '0')}`;
+  
+              if (!groupedSlots[checkDateString]) {
+                groupedSlots[checkDateString] = [];
+              }
+  
+              groupedSlots[checkDateString].push({
+                date: checkDateString,
+                time,
+                day
+              });
+  
+              startTime += 30;
             }
+          });
         }
+      }
     }
-    
-    setDocSlots(groupedSlots);  // Set the grouped slots
-};
+  
+    setDocSlots(groupedSlots);
+  };
+  
+
   
   const bookAppointment = async() => {
     if (!token) {
@@ -93,7 +98,8 @@ const Appointment = () => {
       return navigate("/login");
     }
 
-  const selectedSlot = docSlots[slotIndex];
+    const selectedDateKey = Object.keys(docSlots)[slotIndex];
+    const selectedSlot = docSlots[selectedDateKey];
   const [fromTime] = slotTime.split(" - ");
   const [fromHour, fromMinute] = fromTime.split(":").map(Number);
 
@@ -111,8 +117,7 @@ const Appointment = () => {
 
     
 
-                                              ///c
-      const date = new Date(docSlots[slotIndex].date);            
+  const date = new Date(selectedDateKey);            
       let day = ("0" + date.getDate()).slice(-2);
 let month = ("0" + (date.getMonth() + 1)).slice(-2);  // Month is zero-indexed
 let year = date.getFullYear();

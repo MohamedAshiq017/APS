@@ -242,35 +242,70 @@ const updateDoctorProfile = async(req,res) => {
 
 //API to set availability slots
 
-    const setAvailability = async (req, res) => {
-        try {
-          const { availability } = req.body;  // Availability sent in the request body
-          const token = req.headers.dtoken;
-          const decoded = jwt.verify(token, process.env.JWT_SECRET);
-          const docId = decoded.id;
-
-          console.log(availability)
-      
-          const doctor = await doctorModel.findById(docId);
-      
-          if (!doctor) {
-            return res.json({ success: false, message: "Doctor not found" });
-          }
-      
-          // Assuming you have an "availability" field in your doctor model
-          doctor.availability = availability;
-      
-          await doctor.save();
-      
-          res.json({ success: true, message: "Availability updated successfully!" });
-        } catch (error) {
-          console.log(error);
-          res.json({ success: false, message: error.message });
+const setAvailability = async (req, res) => {
+    try {
+      const { availability } = req.body;
+      const token = req.headers.dtoken;
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const docId = decoded.id;
+  
+      if (!availability || typeof availability !== "object") {
+        return res.json({ success: false, message: "Invalid availability format" });
+      }
+  
+      const doctor = await doctorModel.findById(docId);
+      if (!doctor) {
+        return res.json({ success: false, message: "Doctor not found" });
+      }
+  
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); // Strip time
+  
+      const filteredAvailability = {};
+  
+      for (const [day, { date, slots }] of Object.entries(availability)) {
+        const slotDate = new Date(date);
+        slotDate.setHours(0, 0, 0, 0); // Strip time
+  
+        if (slotDate >= today) {
+          filteredAvailability[day] = {
+            date,
+            slots: slots || []
+          };
         }
-      };
+      }
+  
+      doctor.availability = filteredAvailability;
+      await doctor.save();
+  
+      res.json({ success: true, message: "Availability updated successfully!" });
+    } catch (error) {
+      console.log(error);
+      res.json({ success: false, message: error.message });
+    }
+  };
 
+
+  const getAvailability = async (req, res) => {
+    try {
+      const token = req.headers.dtoken;
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const docId = decoded.id;
+  
+      const doctor = await doctorModel.findById(docId).select("availability");
+  
+      if (!doctor) {
+        return res.json({ success: false, message: "Doctor not found" });
+      }
+  
+      res.json({ success: true, availability: doctor.availability });
+    } catch (error) {
+      console.log(error);
+      res.json({ success: false, message: error.message });
+    }
+  };
 
   
   
-export {changeAvailability,doctorList,loginDoctor,appointmentsDoctor,appointmentCancel,appointmentComplete,doctorDashboard,doctorProfile,updateDoctorProfile,setAvailability
+export {changeAvailability,doctorList,loginDoctor,appointmentsDoctor,appointmentCancel,appointmentComplete,doctorDashboard,doctorProfile,updateDoctorProfile,setAvailability, getAvailability
 }
