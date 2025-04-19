@@ -45,8 +45,9 @@ const Appointment = () => {
     const availabilityEntries = Object.entries(docInfo.availability);
     const groupedSlots = {};
     const today = new Date();
-  
-    // Loop from today to next Monday
+    const currentTime = new Date(); // Get current time
+    
+    // Loop from today to next 7 days
     for (let i = 0; i < 7; i++) {
       const checkDate = new Date(today);
       checkDate.setDate(today.getDate() + i);
@@ -68,16 +69,38 @@ const Appointment = () => {
               const toMin = (startTime + 30) % 60;
   
               const time = `${String(fromHour).padStart(2, '0')}:${String(fromMin).padStart(2, '0')} - ${String(toHour).padStart(2, '0')}:${String(toMin).padStart(2, '0')}`;
+              
+              // Create date object for this slot
+              const slotDate = new Date(checkDateString);
+              slotDate.setHours(fromHour, fromMin, 0);
+              
+              // Format date for checking booked slots
+              const dateObj = new Date(checkDateString);
+              const day = ("0" + dateObj.getDate()).slice(-2);
+              const month = ("0" + (dateObj.getMonth() + 1)).slice(-2);
+              const year = dateObj.getFullYear();
+              const formattedDate = `${day}_${month}_${year}`;
+              
+              // Check if slot is in the past
+              const isPast = slotDate <= currentTime;
+              
+              // Check if slot is already booked
+              const isBooked = docInfo.slots_booked && 
+                                docInfo.slots_booked[formattedDate] && 
+                                docInfo.slots_booked[formattedDate].includes(time);
+              
+              // Only add future and unbooked slots
+              if (!isPast && !isBooked) {
+                if (!groupedSlots[checkDateString]) {
+                  groupedSlots[checkDateString] = [];
+                }
   
-              if (!groupedSlots[checkDateString]) {
-                groupedSlots[checkDateString] = [];
+                groupedSlots[checkDateString].push({
+                  date: checkDateString,
+                  time,
+                  day
+                });
               }
-  
-              groupedSlots[checkDateString].push({
-                date: checkDateString,
-                time,
-                day
-              });
   
               startTime += 30;
             }
@@ -85,8 +108,13 @@ const Appointment = () => {
         }
       }
     }
-  
-    setDocSlots(groupedSlots);
+    
+    // Filter out dates with no available slots
+    const filteredSlots = Object.fromEntries(
+      Object.entries(groupedSlots).filter(([_, slots]) => slots.length > 0)
+    );
+    
+    setDocSlots(filteredSlots);
   };
   
 
@@ -96,6 +124,29 @@ const Appointment = () => {
     //   toast.warn("Please log in to book an appointment");
       toast.warning('Login to book appointment')
       return navigate("/login");
+    }
+      // Add this check right here to verify the slot is still valid
+  const currentTime = new Date();
+  if (slotTime) {
+    const [fromTime] = slotTime.split(" - ");
+    const [fromHour, fromMinute] = fromTime.split(":").map(Number);
+    
+    const selectedDateKey = Object.keys(docSlots)[slotIndex];
+    const slotDateTime = new Date(selectedDateKey);
+    slotDateTime.setHours(fromHour, fromMinute, 0);
+    
+    if (slotDateTime <= currentTime) {
+      toast.warning("This time slot has expired. Please select another time.");
+      setSlotTime(""); // Clear the selected time
+      getAvailableSlots(); // Refresh available slots
+      return;
+    }
+  }
+
+
+    if (!slotTime) {
+      toast.warning('Please select a time slot');
+      return;
     }
 
     const selectedDateKey = Object.keys(docSlots)[slotIndex];
@@ -142,7 +193,7 @@ let year = date.getFullYear();
     } catch (error) {
       console.log(error);
 
-      toast.error(error.message);
+      toast.error(error.response?.data?.message || error.message)
     }
   };///c
 
@@ -176,6 +227,19 @@ let year = date.getFullYear();
     fetchDocInfo();
   }
 }, [doctors, docId]);
+
+
+// Add this effect to periodically check for expired slots
+useEffect(() => {
+  // Check every minute for expired slots
+  const intervalId = setInterval(() => {
+    if (Object.keys(docSlots).length > 0) {
+      getAvailableSlots(); // Refresh available slots
+    }
+  }, 60000); // Check every minute
+  
+  return () => clearInterval(intervalId); // Clean up
+}, [docSlots]);
 
   return (
     docInfo && (
@@ -272,12 +336,17 @@ let year = date.getFullYear();
   })}
 </div>
 
-          <button
-            onClick={bookAppointment}
-            className="bg-primary text-white text-sm font-light px-14 py-3 rounded-full m-6 "
-          >
-            Book an appointment
-          </button>
+<button
+  onClick={bookAppointment}
+  disabled={!slotTime || Object.keys(docSlots).length === 0}
+  className={`text-white text-sm font-light px-14 py-3 rounded-full m-6 ${
+    !slotTime || Object.keys(docSlots).length === 0 
+      ? "bg-gray-300 cursor-not-allowed" 
+      : "bg-primary"
+  }`}
+>
+  Book an appointment
+</button>
         </div>
 
         {/* ----------Related Doctors------------------ */}
