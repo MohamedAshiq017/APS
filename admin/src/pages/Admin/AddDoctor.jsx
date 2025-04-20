@@ -168,7 +168,7 @@ try{
                                 <option value="Dermatologist">Dermatologist</option>
                                 <option value="Pediatrician">Pediatrician</option>
                                 <option value="Neurologist">Neurologist</option>
-                                <option value="Gastroentologist">Gastroentologist</option>
+                                <option value="Gastroenterologist">Gastroenterologist</option>
                                 <option >Others</option>
                             </select>
                             {speciality === 'Others' && (

@@ -48,30 +48,30 @@ const Doctors = () => {
         >
           <p
             onClick={() => {
-              speciality === "General physician"
+              speciality ==="General Physician"
                 ? navigate("/doctors")
-                : navigate("/doctors/General physician");
+                : navigate("/doctors/General Physician");
             }}
             className={`w-[94vw] sm:w-auto pl-3 py-1.5 pr-16 border border-gray-300 rounded transition-all cursor-pointer ${
-              speciality === "General physician"
+              speciality === "General Physician"
                 ? "bg-indigo-200 text -black"
                 : ""
             }`}
           >
-            General physician
+            General Physician
           </p>
 
           <p
             onClick={() => {
-              speciality === "Gynecologist"
+              speciality === "Gynaecologist"
                 ? navigate("/doctors")
-                : navigate("/doctors/Gynecologist");
+                : navigate("/doctors/Gynaecologist");
             }}
             className={`w-[94vw] sm:w-auto pl-3 py-1.5 pr-16 border border-gray-300 rounded transition-all cursor-pointer ${
-              speciality === "Gynecologist" ? "bg-indigo-200 text -black" : ""
+              speciality === "Gynaecologist" ? "bg-indigo-200 text -black" : ""
             }`}
           >
-            Gynecologist
+            Gynaecologist
           </p>
           <p
             onClick={() => {

@@ -33,6 +33,7 @@ const {dToken} =  useContext(DoctorContext)
       <Navbar/>
       <div className='flex items-start'>
         <Sidebar/>
+        <div className="pt-16 ml-20 md:ml-72">
         <Routes>
           {/* Admin Route */}
           <Route path='/' element ={<></>}/>
@@ -46,6 +47,7 @@ const {dToken} =  useContext(DoctorContext)
           <Route path='/doctor-appointments' element ={<DoctorAppointments/>}/>
           <Route path='/doctor-profile' element ={<DoctorProfile/>}/>
         </Routes>
+        </div>
       </div>
     </div>
   )
