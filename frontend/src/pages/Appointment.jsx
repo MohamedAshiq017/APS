@@ -280,6 +280,9 @@ useEffect(() => {
               </p>
             </div>
             <p className="text-gray-500 font-medium mt-4">
+              Address: <span className="text-gray-600">{docInfo.address.line1} , {docInfo.address.line2}</span>
+            </p>
+            <p className="text-gray-500 font-medium mt-4">
               Appointment fee:{" "}
               <span className="text-gray-600">
                 {currencySymbol}
