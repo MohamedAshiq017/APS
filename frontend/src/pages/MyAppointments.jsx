@@ -52,6 +52,25 @@ const MyAppointments = () => {
     }
   }
 
+  // const initPay = (order) =>{
+  //    const options = {
+  //     key:import.meta.env.VITE_RAZORPAY_KEY_ID,
+  //     amount: order.amount,
+  //     currency: order.currency,
+  //     name:'Appointment Payment',
+  //     description:"Appointment Payment",
+  //     order_id: order.id,
+  //     receipt: order.receipt,
+  //     handler: async(response) =>{
+  //       console.log(response);
+        
+  //     }
+  //    }
+
+  //    const rzp = new window.Razorpay(options)
+  //    rzp.open()
+  // }
+
   const appointmentRazorpay = async(appointmentId) =>{
     console.log("Pay button clicked for ID:", appointmentId); 
 
@@ -60,6 +79,7 @@ const MyAppointments = () => {
 
       if(data.success){
         console.log(data.order)
+        // initPay(data.order)
       }
     } catch (error) {
       
@@ -93,8 +113,8 @@ useEffect(()=>{
         </div>
         <div></div>
         <div className='flex flex-col gap-2 justify-end'>
-        {!item.cancelled && !item.payment && !item.isCompleted && <button className='sm:min-w-48 py-2 border rounded text-stone-500 bg-indigo-50'>Paid</button>}
-        {!item.cancelled && !item.payment && !item.isCompleted && <button  onClick={()=>appointmentRazorpay(item._id)} className='text-sm text-stone-500 text-center sm:min-w-48 py-2 border rounded hover:bg-primary hover:text-white transition-all duration-300'>Pay Online</button>}
+        {/* {!item.cancelled && !item.payment && !item.isCompleted && <button className='sm:min-w-48 py-2 border rounded text-stone-500 bg-indigo-50'>Paid</button>}
+        {!item.cancelled && !item.payment && !item.isCompleted && <button  onClick={()=>appointmentRazorpay(item._id)} className='text-sm text-stone-500 text-center sm:min-w-48 py-2 border rounded hover:bg-primary hover:text-white transition-all duration-300'>Pay Online</button>} */}
         {!item.cancelled &&  !item.isCompleted && <button onClick={()=>cancelAppointment(item._id)} className='text-sm text-stone-500 text-center sm:min-w-48 py-2 border rounded hover:bg-red-600 hover:text-white transition-all duration-300'>Cancel Appointment</button> }
         {item.cancelled &&  !item.isCompleted &&<button className='sm:min-w-48 py-2 border border-red-500 rounded text-red-500'>Appointment Cancelled</button>}
         {

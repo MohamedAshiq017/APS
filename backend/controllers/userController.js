@@ -254,7 +254,7 @@ const razorpayInstance = new razorpay({
 
 
 
-//API to make payment of appointment 
+//API to make payment of appointment using razorpay
 
 const paymentRazorpay = async (req, res) => {
 
