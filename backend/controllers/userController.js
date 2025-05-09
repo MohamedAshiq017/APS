@@ -9,6 +9,16 @@ import doctorModel from '../models/doctorModel.js '
 import appointmentModel from '../models/appointmentModel.js'
 
 import razorpay from 'razorpay'
+import nodemailer from 'nodemailer'
+import { format } from 'date-fns';
+
+
+const months = ["","jan","feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]; 
+
+const slotDateFormat = (slotDate) =>{
+  const dateArray = slotDate.split('_')
+  return dateArray[0]+" "+months[Number(dateArray[1])]+" "+dateArray[2]
+}
 
 // API to register user
 const registerUser = async (req, res) => {
@@ -136,6 +146,33 @@ const updateProfile = async (req, res) => {
     }
 }
 
+// Configure Nodemailer transporter
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+    }
+})
+
+//API to send appointment confirmation email
+const sendAppointmentMail = async (email, name, doctorName, slotDate, slotTime) => {
+        // slotDate is expected in the format "YYYY_MM_DD"
+        const [year, month, day] = slotDate.split('_').map(Number);
+        const parsedDate = new Date(year, month - 1, day); // JavaScript months are 0-indexed
+        const formattedDate = format(parsedDate, 'MMMM dd, yyyy');
+    const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: 'Appointment Confirmation',
+        text: `Hello ${name},\n\nYour appointment with ${doctorName} has been successfully booked on ${slotDateFormat(slotDate)} at ${slotTime}.\n\nThank you!`
+    }
+
+    await transporter.sendMail(mailOptions)
+}
+
+
+
 //API to book appointment
 
 const bookAppointment = async (req, res) => {
@@ -186,6 +223,15 @@ const bookAppointment = async (req, res) => {
 
         await doctorModel.findByIdAndUpdate(docId, { slots_booked })
 
+       
+
+        await sendAppointmentMail(
+            userData.email,
+            userData.name,
+            docData.name,
+            slotDate,
+            slotTime
+        )
         res.json({ success: true, message: 'Appointment booked' })
 
     } catch (error) {

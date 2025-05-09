@@ -183,6 +183,7 @@ let year = date.getFullYear();
       );
       if (data.success) {
         toast.success(data.message);
+        console.log("Appointment is booked.")
         getDoctorsData();
         navigate("/myAppointments");
       } else {
