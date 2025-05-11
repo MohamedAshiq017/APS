@@ -157,19 +157,65 @@ const transporter = nodemailer.createTransport({
 
 //API to send appointment confirmation email
 const sendAppointmentMail = async (email, name, doctorName, slotDate, slotTime) => {
-        // slotDate is expected in the format "YYYY_MM_DD"
-        const [year, month, day] = slotDate.split('_').map(Number);
-        const parsedDate = new Date(year, month - 1, day); // JavaScript months are 0-indexed
-        const formattedDate = format(parsedDate, 'MMMM dd, yyyy');
+       
+      // slotDate is expected in the format "YYYY_MM_DD"
+      const [year, month, day] = slotDate.split('_').map(Number);
+      const parsedDate = new Date(year, month - 1, day); // JavaScript months are 0-indexed
+      const formattedDate = format(parsedDate, 'MMMM dd, yyyy');
+      
+      // Calculate the end time (for simplicity, assume appointments are 30 minutes)
+      const startDateTime = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      const startTime = `${slotTime}00`;  // Append "00" to slotTime for minutes
+      const endTime = `${(Number(slotTime) + 1).toString().padStart(2, '0')}00`;  // Add 1 hour to the start time for the end time
+  
+    // Generate the Google Calendar link
+    const calendarLink = createGoogleCalendarLink(
+        `Appointment with Dr. ${doctorName}`, 
+        startDateTime, 
+        slotTime, 
+        startDateTime, 
+        endTime, 
+        `Appointment with Dr. ${doctorName}`, 
+        "Your Location"
+    );
     const mailOptions = {
         from: process.env.EMAIL_USER,
         to: email,
         subject: 'Appointment Confirmation',
-        text: `Hello ${name},\n\nYour appointment with ${doctorName} has been successfully booked on ${slotDateFormat(slotDate)} at ${slotTime}.\n\nThank you!`
+        text: `Hello ${name},\n\nYour appointment with ${doctorName} has been successfully booked on ${slotDateFormat(slotDate)} at ${slotTime}..\n\nYou can add this appointment to your Google Calendar by clicking the link below:\n${calendarLink}\n\nThank you!`
     }
 
     await transporter.sendMail(mailOptions)
 }
+
+//API to attach google calendar link in email
+const createGoogleCalendarLink = (eventTitle, startDate, startTime, endDate, endTime, description, location) => {
+    // Converts "14:30" or "1430" to "143000"
+    const normalizeTime = (timeStr) => {
+        let parts = timeStr.includes(':') ? timeStr.split(':') : [timeStr.slice(0, 2), timeStr.slice(2)];
+        const hour = parts[0].padStart(2, '0');
+        const minute = parts[1]?.padStart(2, '0') || '00';
+        return `${hour}${minute}00`; // HHMMSS
+    };
+
+    const formatDateTime = (date, time) => {
+        const timeFormatted = normalizeTime(time);
+        return `${date.replace(/-/g, '')}T${timeFormatted}`;
+    };
+
+    const startDateTime = formatDateTime(startDate, startTime);
+    const endDateTime = formatDateTime(endDate, endTime);
+
+    const calendarLink = `https://www.google.com/calendar/render?action=TEMPLATE` +
+        `&text=${encodeURIComponent(eventTitle)}` +
+        `&dates=${startDateTime}/${endDateTime}` +
+        `&details=${encodeURIComponent(description)}` +
+        `&location=${encodeURIComponent(location)}` +
+        `&sf=true&output=xml`;
+
+    // Return anchor-wrapped HTML version
+    return `<a href="${calendarLink}" target="_blank" rel="noopener noreferrer">Add to Google Calendar</a>`;
+};
 
 
 
