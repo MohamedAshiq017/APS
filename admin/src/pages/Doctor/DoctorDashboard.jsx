@@ -125,7 +125,7 @@ const DoctorDashboard = () => {
       console.log("🧪 [fetchAvailability] after default generation:", generatedAvailability);
       
       // Merge with backend data if available
-      const { data } = await axios.get(backendUrl + "api/doctor/availability", {
+      const { data } = await axios.get(backendUrl + '/api/doctor/availability', {
         headers: { dToken }
       });
       

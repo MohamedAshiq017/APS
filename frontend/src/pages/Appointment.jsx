@@ -176,7 +176,7 @@ let year = date.getFullYear();
      
       try {  
       const { data } = await axios.post(
-        backendUrl + "api/user/book-appointment",
+        backendUrl + '/api/user/book-appointment',
         { docId, slotDate, slotTime , userId: userData?._id,
           userData: userData},
         { headers: { token } } 

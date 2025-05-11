@@ -32,7 +32,7 @@ const Login = () => {
      
         } else{
             console.log("Doctor Login")
-            const { data } = await axios.post(backendUrl + "api/doctor/login", {
+            const { data } = await axios.post(backendUrl + '/api/doctor/login', {
                 email,
                 password,
               });
