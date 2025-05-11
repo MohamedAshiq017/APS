@@ -22,7 +22,7 @@ const DoctorProfile = () => {
       }
       console.log('Sending update:', updateData) 
 
-      const {data} = await axios.post(backendUrl +'api/doctor/update-profile',updateData,{headers:{dToken}})
+      const {data} = await axios.post(backendUrl +'/api/doctor/update-profile',updateData,{headers:{dToken}})
 
       console.log('Response:', data) 
 

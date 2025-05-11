@@ -84,7 +84,7 @@ const DoctorDashboard = () => {
       const saveData = { availability: filteredAvailability };
       
       const { data } = await axios.post(
-        backendUrl + 'api/doctor/set-availability',
+        backendUrl + '/api/doctor/set-availability',
         saveData,
         { headers: { dToken } }
       );

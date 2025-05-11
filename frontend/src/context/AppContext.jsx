@@ -19,7 +19,7 @@ const[userData,setUserData] = useState(false)
 
     const getDoctorsData = async() =>{
       try{
-          const {data} = await axios.get(backendUrl + 'api/doctor/list')
+          const {data} = await axios.get(backendUrl + '/api/doctor/list')
           if(data.success){
             setDoctors(data.doctors )
           }
@@ -37,7 +37,7 @@ const[userData,setUserData] = useState(false)
 
     const loadUserProfileData = async() =>{
       try{
-        const {data} = await axios.get(backendUrl + 'api/user/get-profile',{headers:{token}})
+        const {data} = await axios.get(backendUrl + '/api/user/get-profile',{headers:{token}})
 
         if(data.success){
           setUserData(data.userData)
