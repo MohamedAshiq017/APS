@@ -20,7 +20,7 @@ const AdminContextProvider = (props) =>{
 
     const getAllDoctors = async() =>{
 try{
-    const {data} = await axios.post(backendUrl + "/api/admin/all-doctors",{},{headers:{aToken}}) 
+    const {data} = await axios.post(backendUrl + "api/admin/all-doctors",{},{headers:{aToken}}) 
     if(data.success){
         setDoctors(data.doctors)
         console.log(data.doctors)
@@ -39,7 +39,7 @@ toast.error(error.message)
     const changeAvailability = async(docId)  => {
         try{
             
-            const {data} = await axios.post(backendUrl +'/api/admin/change-availability',{docId},{headers:{aToken}})
+            const {data} = await axios.post(backendUrl +'api/admin/change-availability',{docId},{headers:{aToken}})
     
             if(data.success){
                 toast.success(data.message)
@@ -56,7 +56,7 @@ toast.error(error.message)
 
     const getAllAppointments = async() =>{
         try{
-            const {data} = await axios.get(backendUrl + '/api/admin/appointments',{headers:{aToken}})
+            const {data} = await axios.get(backendUrl + 'api/admin/appointments',{headers:{aToken}})
 
             if(data.success){
                 setAppointments(data.appointments)
@@ -74,7 +74,7 @@ toast.error(error.message)
 
     const cancelAppointment = async(appointmentId) =>{
         try {
-            const {data} = await axios.post(backendUrl + '/api/admin/cancel-appointment',{appointmentId},{headers:{aToken}})
+            const {data} = await axios.post(backendUrl + 'api/admin/cancel-appointment',{appointmentId},{headers:{aToken}})
 
             if(data.success){
                 toast.success(data.message)
@@ -89,7 +89,7 @@ toast.error(error.message)
 
     const getDashData = async() =>{
         try {
-            const {data} = await axios.get(backendUrl + '/api/admin/dashboard',{headers:{aToken}})
+            const {data} = await axios.get(backendUrl + 'api/admin/dashboard',{headers:{aToken}})
 
             if(data.success){
                 setDashData(data.dashData)

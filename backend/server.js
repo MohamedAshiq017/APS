@@ -20,10 +20,10 @@ app.use(cors())
 
 //api endpoints
 
-app.use('/api/admin',adminRouter)
-app.use('/api/doctor', doctorRouter)
-app.use('/api/user',userRouter)
-//localhost:4000/api/admin
+app.use('api/admin',adminRouter)
+app.use('api/doctor', doctorRouter)
+app.use('api/user',userRouter)
+//localhost:4000api/admin
 
 app.get('/',(req,res)=>{
     res.send('API WORKING')
