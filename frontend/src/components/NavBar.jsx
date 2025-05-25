@@ -22,7 +22,7 @@ const NavBar = () => {
         onClick={() => {
             navigate("/");
           }}
-        className='w-44 cursor-pointer' src={assets.logo} alt=''/>
+        className='w-[100px] h-[37px] cursor-pointer' src={assets.logo} alt=''/>
         <ul className='hidden md:flex items-start gap-5 font-medium'>
             <NavLink to='/'>
                 <li className='py-1'>HOME</li>
